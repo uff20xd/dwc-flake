@@ -3,10 +3,9 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    neuswc.url = "github:uff20xd/neuswc-flake";
   };
 
-  outputs = { self, nixpkgs, neuswc }: 
+  outputs = { self, nixpkgs }: 
     let 
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = pkgsRaw: evaluation: (nixpkgs.lib.genAttrs supportedSystems) (system:  evaluation system pkgsRaw.${system});
