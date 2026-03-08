@@ -27,6 +27,31 @@
               wayland
             ];
           };
+          neuwld = pkgs.stdenv.mkDerivation rec {
+            name = "neuwld";
+            src = pkgs.fetchgit {
+              url = "https://git.sr.ht/~shrub900/neuwld";
+              hash = "sha256-0+rgWrefh19bBEmcqw0Lal1PHkendtCkQ2EIg+LHb74=";
+            };
+            buildInputs = with pkgs; [
+              gcc
+              bmake
+              pkg-config
+              udev 
+              xcb-proto
+              libdrm
+              wayland-protocols
+              wayland
+              fontconfig
+              pixman
+              wayland-scanner
+            ];
+            installPhase = ''
+            runHook preInstall
+            bmake install PREFIX=$out
+            runHook postInstall
+            '';
+          };
           });
       devShells = forAllSystems nixpkgs.legacyPackages (system: pkgs: rec {
         default = pkgs.mkShellNoCC rec {
