@@ -37,24 +37,47 @@
             buildPhase = ''
               runHook preBuild
               cd $tempsrc
-              bmake
-              runHook postBuild
+              set -ex
+              PKGS="swc wayland-server xkbcommon libinput pixman-1 libdrm wld libudev xcb xcb-composite xcb-ewmh xcb-icccm"
+              PKG_CFLAGS="$( pkg-config --cflags $PKGS )"
+              PKG_LIBS="$( pkg-config --libs $PKGS )"
+              CFLAGS+="$PKG_CFLAGS"
+              LDLIBS+="$PKG_LIBS -lm"
+              CFLAGS+="-std=c99 -Wall -Wextra -O2"
+              CPPFLAGS+="-D_POSIX_C_SOURCE=200809L"
+
+              PREFIX="/usr/local"
+              BINDIR="$PREFIX/bin"
+              OUT="dwc"
+              SRC="dwc.c util.c"
+              gcc $CFLAGS $CPPFLAGS -o $OUT $SRC $LDLIBS
+            '';
+            installPhase = ''
+            runHook preInstall
+            cd $tempsrc
+            bmake install PREFIX=$out
+            runHook postInstall
             '';
             buildInputs = with pkgs; [
               gcc
               bmake
               pkg-config
               udev 
-              xcb-proto
               wayland-protocols
               wayland
               fontconfig
               pixman
               wayland-scanner
-              neuwld
-              neuswc
               libxkbcommon
               fixed-libdrm
+              libinput
+              xcb-imdkit
+              xcb-proto
+              xcbutilxrm
+              libxcb
+              libxcb-wm
+              neuwld
+              neuswc
             ];
           };
           neuswc = pkgs.stdenv.mkDerivation rec {
