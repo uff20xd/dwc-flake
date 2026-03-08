@@ -1,4 +1,3 @@
-
 /* See LICENSE file for copyright and license details. */
 #ifndef CONFIG_H
 #define CONFIG_H
