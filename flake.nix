@@ -9,10 +9,10 @@
     let 
       supportedSystems = [ "x86_64-linux" ];
       forAllSystems = pkgsRaw: evaluation: (nixpkgs.lib.genAttrs supportedSystems) (system:  evaluation system pkgsRaw.${system});
+      config_file = ./config.h;
     in {
       packages = forAllSystems nixpkgs.legacyPackages (system: pkgs: rec {
           default = dwc;
-
           fixed-libdrm = (pkgs.libdrm.dev.overrideAttrs {
                 postInstall = ''
                   sed -i -e 's/<drm.h>/<libdrm\/drm.h>/' $dev/include/xf86drmMode.h
@@ -26,6 +26,20 @@
               url = "https://git.sr.ht/~corg/DWC";
               hash = "sha256-MKHCFqey/7RzscUl4A6CDlmjmcm5D42nOgie+0KOHc8=";
             };
+            config = config_file;
+            preBuild = ''
+              tempsrc="$( mktemp -d )"
+              mkdir -p $tempsrc
+              cp -r $src/. $tempsrc
+              cd $tempsrc
+              cp $config $tempsrc/config.h
+            '';
+            buildPhase = ''
+              runHook preBuild
+              cd $tempsrc
+              bmake
+              runHook postBuild
+            '';
             buildInputs = with pkgs; [
               gcc
               bmake
