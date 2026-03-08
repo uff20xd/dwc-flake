@@ -91,13 +91,5 @@
             '';
           };
           });
-      devShells = forAllSystems nixpkgs.legacyPackages (system: pkgs: rec {
-        default = pkgs.mkShellNoCC rec {
-          nativeBuildInputs = [ pkgs.pkg-config ];
-          buildInputs = with pkgs; [
-            gcc
-          ];
-        };
-      });
-    };
+   };
 }
