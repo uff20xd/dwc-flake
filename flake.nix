@@ -53,7 +53,6 @@
               bmake
               pkg-config
               udev 
-              xcb-proto
               wayland-protocols
               wayland
               fontconfig
@@ -62,12 +61,29 @@
               neuwld
               libxkbcommon
               fixed-libdrm
+              libinput
+              xcb-imdkit
+              xcb-proto
             ];
             preBuild = ''
-              sed -i -e 's/<drm_fourcc>/<libdrm\/drm_fourcc.h>/' $src/libswc/dmabuf.c
+              tempsrc="$( mktemp -d )"
+              cp -r $src/. $tempsrc
+              chmod 755 $tempsrc/libswc
+              cd $tempsrc
+              sed -Ei -e 's/<drm_fourcc.h>/<libdrm\/drm_fourcc.h>/' $tempsrc/libswc/dmabuf.c
+              sed -Ei -e 's/<drm.h>/<libdrm\/drm.h>/' $tempsrc/libswc/drm.c
+            '';
+            buildPhase = ''
+              runHook preBuild
+              cd $tempsrc
+              chmod 755 protocol
+              chmod 755 cursor
+              bmake
+              runHook postBuild
             '';
             installPhase = ''
             runHook preInstall
+            cd $tempsrc
             bmake install PREFIX=$out
             runHook postInstall
             '';
