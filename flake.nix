@@ -12,6 +12,13 @@
     in {
       packages = forAllSystems nixpkgs.legacyPackages (system: pkgs: rec {
           default = dwc;
+
+          fixed-libdrm = (pkgs.libdrm.dev.overrideAttrs {
+                postInstall = ''
+                  sed -i -e 's/<drm.h>/<libdrm\/drm.h>/' $dev/include/xf86drmMode.h
+                  sed -i -e 's/<drm_mode.h>/<libdrm\/drm_mode.h>/' $dev/include/xf86drmMode.h
+                '';
+              });
           dwc = pkgs.stdenv.mkDerivation rec {
             name = "dwc";
             src = fetchGit {
@@ -24,7 +31,6 @@
               pkg-config
               udev 
               xcb-proto
-              libdrm
               wayland-protocols
               wayland
               fontconfig
@@ -33,6 +39,7 @@
               neuwld
               neuswc
               libxkbcommon
+              fixed-libdrm
             ];
           };
           neuswc = pkgs.stdenv.mkDerivation rec {
@@ -47,7 +54,6 @@
               pkg-config
               udev 
               xcb-proto
-              libdrm
               wayland-protocols
               wayland
               fontconfig
@@ -55,12 +61,11 @@
               wayland-scanner
               neuwld
               libxkbcommon
-              (libdrm.overrideAttrs {
-                postInstall = ''
-                sed -i -e 's|<drm.h>|<libdrm/drm.h>|' $dev/include/xf86drm.h
-                '';
-              })
+              fixed-libdrm
             ];
+            preBuild = ''
+              sed -i -e 's/<drm_fourcc>/<libdrm\/drm_fourcc.h>/' $src/libswc/dmabuf.c
+            '';
             installPhase = ''
             runHook preInstall
             bmake install PREFIX=$out
@@ -79,12 +84,12 @@
               pkg-config
               udev 
               xcb-proto
-              libdrm
               wayland-protocols
               wayland
               fontconfig
               pixman
               wayland-scanner
+              fixed-libdrm
             ];
             installPhase = ''
             runHook preInstall
