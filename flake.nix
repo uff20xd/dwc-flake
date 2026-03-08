@@ -17,6 +17,7 @@
                 postInstall = ''
                   sed -i -e 's/<drm.h>/<libdrm\/drm.h>/' $dev/include/xf86drmMode.h
                   sed -i -e 's/<drm_mode.h>/<libdrm\/drm_mode.h>/' $dev/include/xf86drmMode.h
+                  sed -i -e 's/<drm.h>/<libdrm\/drm.h>/' $dev/include/xf86drm.h
                 '';
               });
           dwc = pkgs.stdenv.mkDerivation rec {
@@ -64,6 +65,9 @@
               libinput
               xcb-imdkit
               xcb-proto
+              xcbutilxrm
+              libxcb
+              libxcb-wm
             ];
             preBuild = ''
               tempsrc="$( mktemp -d )"
@@ -72,18 +76,23 @@
               cd $tempsrc
               sed -Ei -e 's/<drm_fourcc.h>/<libdrm\/drm_fourcc.h>/' $tempsrc/libswc/dmabuf.c
               sed -Ei -e 's/<drm.h>/<libdrm\/drm.h>/' $tempsrc/libswc/drm.c
+              sed -Ei -e 's/<drm.h>/<libdrm\/drm.h>/' $tempsrc/libswc/output.c
             '';
             buildPhase = ''
               runHook preBuild
               cd $tempsrc
               chmod 755 protocol
               chmod 755 cursor
+              chmod 755 launch
+              chmod 755 extra
               bmake
               runHook postBuild
             '';
             installPhase = ''
             runHook preInstall
             cd $tempsrc
+            echo "s/install -m 4755 launch\/swc-launch $${DESTDIR}$${BINDIR}\//"
+            sed -i -e "s/-m 4755//" $tempsrc/Makefile
             bmake install PREFIX=$out
             runHook postInstall
             '';
