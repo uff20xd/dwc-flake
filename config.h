@@ -49,7 +49,7 @@ static const char *termcmd[]  = { "st-wl", NULL };
 
 static struct bind binds[] = {
 	/* keyboard */
-	{ SWC_BINDING_KEY,    MODKEY,          XKB_KEY_Return,  { .v = termcmd },   spawn },
+	{ SWC_BINDING_KEY,    MODKEY,          XKB_KEY_Return,  { .v = "kitty" },   spawn },
 	{ SWC_BINDING_KEY,    MODKEY,          XKB_KEY_p,       { .v = menucmd },   spawn },
 	{ SWC_BINDING_KEY,    MODKEY|SHIFT,    XKB_KEY_e,       { .v = NULL },      quit },
 	{ SWC_BINDING_KEY,    MODKEY,          XKB_KEY_k,       { .v = NULL },      focus_next },
