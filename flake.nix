@@ -2,7 +2,7 @@
   description = "A very basic flake";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-25.11";
   };
 
   outputs = { self, nixpkgs }: 
@@ -33,7 +33,6 @@
               neuwld
               neuswc
               libxkbcommon
-              libdrm
             ];
           };
           neuswc = pkgs.stdenv.mkDerivation rec {
@@ -56,7 +55,11 @@
               wayland-scanner
               neuwld
               libxkbcommon
-              libdrm
+              (libdrm.overrideAttrs {
+                postInstall = ''
+                sed -i -e 's|<drm.h>|<libdrm/drm.h>|' $dev/include/xf86drm.h
+                '';
+              })
             ];
             installPhase = ''
             runHook preInstall
