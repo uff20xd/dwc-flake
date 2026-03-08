@@ -22,9 +22,9 @@
               });
           dwc = pkgs.stdenv.mkDerivation rec {
             name = "dwc";
-            src = fetchGit {
+            src = pkgs.fetchgit {
               url = "https://git.sr.ht/~corg/DWC";
-              hash = "";
+              hash = "sha256-MKHCFqey/7RzscUl4A6CDlmjmcm5D42nOgie+0KOHc8=";
             };
             buildInputs = with pkgs; [
               gcc
