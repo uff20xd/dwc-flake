@@ -91,9 +91,9 @@
             installPhase = ''
             runHook preInstall
             cd $tempsrc
-            echo "s/install -m 4755 launch\/swc-launch $${DESTDIR}$${BINDIR}\//"
             sed -i -e "s/-m 4755//" $tempsrc/Makefile
             bmake install PREFIX=$out
+            chmod 755 $out/bin/swc-launch
             runHook postInstall
             '';
           };
