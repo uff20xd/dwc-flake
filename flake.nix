@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    neuswc = "github:uff20xd/neuswc-flake";
+    neuswc.url = "github:uff20xd/neuswc-flake";
   };
 
   outputs = { self, nixpkgs, neuswc }: 
@@ -25,7 +25,6 @@
               pkg-config
               wayland-scanner 
               wayland
-              neuswc.default
             ];
           };
           });
