@@ -11,6 +11,7 @@
       forAllSystems = pkgsRaw: evaluation: (nixpkgs.lib.genAttrs supportedSystems) (system:  evaluation system pkgsRaw.${system});
       config_file = ./config.h;
     in {
+      overlays.default = final: prev: { dwc = self.packages.dwc; neuwld = self.packages.neuwld; neuswc = self.packages.neuswc; };
       packages = forAllSystems nixpkgs.legacyPackages (system: pkgs: rec {
           default = dwc;
           fixed-libdrm = (pkgs.libdrm.dev.overrideAttrs {
