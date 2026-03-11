@@ -23,7 +23,7 @@
                 '';
               });
       };
-      packages = forAllSystems nixpkgs.legacyPackages (system: pkgs: rec {
+      packages = forAllSystems nixpkgs [ self.overlays.default ] (system: pkgs: rec {
           default = dwc;
           dwc = self.dwc pkgs;
           neuswc = self.neuswc pkgs;
